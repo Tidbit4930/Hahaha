@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Shooting Letters and Emojis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      overflow: hidden;
+    }
+    .shootingElement {
+      position: absolute;
+      opacity: 0;
+      animation-timing-function: ease-in-out;
+    }
+    .emoji {
+      font-size: 50px; /* Adjust this value for emojis */
+    }
+    .letter {
+      font-size: 30px; /* Adjust this value for letters */
+    }
+    @keyframes shoot {
+      0% { transform: translate(0%, 0%); opacity: 1; }
+      100% { transform: translate(100%, 100%); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const emojis = ['😀', '😃', '😄', '😁', '😆'];
+
+    function getRandomNumber(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function createShootingElement(content) {
+      const element = document.createElement('span');
+      element.classList.add('shootingElement');
+      if (emojis.includes(content)) {
+        element.classList.add('emoji');
+      } else {
+        element.classList.add('letter');
+      }
+      element.textContent = content;
+      element.style.left = getRandomNumber(0, window.innerWidth - 100) + 'px';
+      element.style.top = getRandomNumber(0, window.innerHeight - 100) + 'px';
+      element.style.animationDuration = getRandomNumber(1, 5) + 's';
+      element.style.animationName = 'shoot';
+      document.body.appendChild(element);
+    }
+
+    function generateShootingElements() {
+      const letters = ['哈哈哈', 'lol', 'jajaja', 'ㅋㅋㅋ', 'エヘヘヘヘへ']; // Add more letters here
+
+      for (let i = 0; i < 50; i++) {
+        const randomIndex = getRandomNumber(0, letters.length - 1);
+        createShootingElement(letters[randomIndex]);
+      }
+
+      for (let i = 0; i < 50; i++) {
+        const randomIndex = getRandomNumber(0, emojis.length - 1);
+        createShootingElement(emojis[randomIndex]);
+      }
+    }
+
+    setInterval(generateShootingElements, 2000);
+  </script>
+</body>
+</html>
