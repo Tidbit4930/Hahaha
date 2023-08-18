@@ -8,7 +8,7 @@ In blockchain's trust, we hope it'll last.
 Mining coins, or trading high,
 We laugh at gains, to the sky.
 In bear and bull, in loss and gain,
-In crypto's world, laughter remains.
+In crypto's world, we stake our claims.
 
 A chuckle at a meme coin's rise,
 At Doge's bark and Shiba's eyes.
