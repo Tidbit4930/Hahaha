@@ -40,7 +40,7 @@
 </head>
 <body>
   <script>
-    const emojis = { '😀': 1, '🤣': 2, '😄': 3, '😁': 4, '😆': 5, '🤭': 6 };
+    const emojis = { '😀': 1, '🤭': 2, '😄': 3, '😆': 4, '😁': 5, '🤣': 6 };
     const obstacles = { '💣': 'clear', '🧨': 'reduce', '🚫': 'freeze' };
     let score = 0;
     const targetScore = 1000;
@@ -72,7 +72,7 @@
             alert("Congratulations! You reached the target score!");
             location.reload();
           }
-        }
+        };
       } else if (type === 'letter') {
         element.classList.add('letter');
       } else {
@@ -92,7 +92,7 @@
           }
           document.getElementById("score").innerText = "Score: " + score;
           document.body.removeChild(element);
-        }
+        };
       }
 
       element.addEventListener('animationend', function() {
@@ -104,21 +104,17 @@
     function generateShootingElements() {
       if (gameFrozen) return;
       const letters = ['哈哈哈', 'lol', 'jajaja', 'ㅋㅋㅋ', 'エヘヘヘヘへ'];
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 10; i++) { // Reduce the number of letter elements
         const randomIndex = getRandomNumber(0, letters.length - 1);
         createShootingElement(letters[randomIndex], 'letter');
       }
 
-      for (let i = 0; i < 5; i++) {
-        for (let emoji in emojis) {
-          createShootingElement(emoji, 'emoji');
-        }
+      for (let emoji in emojis) {
+        createShootingElement(emoji, 'emoji');
       }
 
-      for (let i = 0; i < 10; i++) { // Increase the occurrence of obstacles
-        for (let obstacle in obstacles) {
-          createShootingElement(obstacle, 'obstacle');
-        }
+      for (let obstacle in obstacles) {
+        createShootingElement(obstacle, 'obstacle');
       }
     }
 
@@ -126,13 +122,13 @@
       if (document.hidden) {
         clearInterval(generateElementsInterval);
       } else {
-        generateElementsInterval = setInterval(generateShootingElements, 2000);
+        generateElementsInterval = setInterval(generateShootingElements, 4000);
       }
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    generateElementsInterval = setInterval(generateShootingElements, 2000);
+    generateElementsInterval = setInterval(generateShootingElements, 4000); // Increase the interval
 
     setInterval(() => {
       if (timeLeft > 0) {
