@@ -10,64 +10,146 @@
     }
     .shootingElement {
       position: absolute;
-      opacity: 0;
-      animation-timing-function: ease-in-out;
+      opacity: 1;
+      animation-timing-function: linear;
     }
     .emoji {
-      font-size: 50px; /* Adjust this value for emojis */
+      font-size: 50px;
+      cursor: pointer;
     }
     .letter {
-      font-size: 30px; /* Adjust this value for letters */
+      font-size: 30px;
     }
-    @keyframes shoot {
-      0% { transform: translate(0%, 0%); opacity: 1; }
-      100% { transform: translate(100%, 100%); opacity: 0; }
+    .obstacle {
+      font-size: 50px;
+      cursor: pointer;
+    }
+    @keyframes shoot1 {
+      100% { transform: translateX(100vw); }
+    }
+    @keyframes shoot2 {
+      100% { transform: translateY(100vh); }
+    }
+    @keyframes shoot3 {
+      100% { transform: translateX(-100vw); }
+    }
+    @keyframes shoot4 {
+      100% { transform: translateY(-100vh); }
     }
   </style>
 </head>
 <body>
   <script>
-    const emojis = ['😀', '🤣', '😄', '😁', '😆', '🤭'];
+    const emojis = { '😀': 1, '🤣': 2, '😄': 3, '😁': 4, '😆': 5, '🤭': 6 };
+    const obstacles = { '💣': 'clear', '🧨': 'reduce', '🚫': 'freeze' };
+    let score = 0;
+    const targetScore = 1000;
+    const gameDuration = 300; // 5 minutes (300 seconds)
+    let timeLeft = gameDuration;
+    let generateElementsInterval;
+    let gameFrozen = false;
 
     function getRandomNumber(min, max) {
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    function createShootingElement(content) {
+    function createShootingElement(content, type) {
       const element = document.createElement('span');
       element.classList.add('shootingElement');
-      if (emojis.includes(content)) {
-        element.classList.add('emoji');
-      } else {
-        element.classList.add('letter');
-      }
       element.textContent = content;
       element.style.left = getRandomNumber(0, window.innerWidth - 100) + 'px';
       element.style.top = getRandomNumber(0, window.innerHeight - 100) + 'px';
       element.style.animationDuration = getRandomNumber(1, 5) + 's';
-      element.style.animationName = 'shoot';
+      element.style.animationName = 'shoot' + getRandomNumber(1, 4);
+
+      if (type === 'emoji') {
+        element.classList.add('emoji');
+        element.onclick = function() {
+          score += emojis[content];
+          document.getElementById("score").innerText = "Score: " + score;
+          document.body.removeChild(element);
+          if (score >= targetScore) {
+            alert("Congratulations! You reached the target score!");
+            location.reload();
+          }
+        }
+      } else if (type === 'letter') {
+        element.classList.add('letter');
+      } else {
+        element.classList.add('obstacle');
+        element.onclick = function() {
+          switch (obstacles[content]) {
+            case 'reduce':
+              score--;
+              break;
+            case 'clear':
+              score = 0;
+              break;
+            case 'freeze':
+              gameFrozen = true;
+              setTimeout(() => { gameFrozen = false; }, 5000);
+              break;
+          }
+          document.getElementById("score").innerText = "Score: " + score;
+          document.body.removeChild(element);
+        }
+      }
+
+      element.addEventListener('animationend', function() {
+        document.body.removeChild(element);
+      });
       document.body.appendChild(element);
     }
 
     function generateShootingElements() {
-      const letters = ['哈哈哈', 'lol', 'jajaja', 'ㅋㅋㅋ', 'エヘヘヘヘへ']; // Add more letters here
-
+      if (gameFrozen) return;
+      const letters = ['哈哈哈', 'lol', 'jajaja', 'ㅋㅋㅋ', 'エヘヘヘヘへ'];
       for (let i = 0; i < 50; i++) {
         const randomIndex = getRandomNumber(0, letters.length - 1);
-        createShootingElement(letters[randomIndex]);
+        createShootingElement(letters[randomIndex], 'letter');
       }
 
-      for (let i = 0; i < 50; i++) {
-        const randomIndex = getRandomNumber(0, emojis.length - 1);
-        createShootingElement(emojis[randomIndex]);
+      for (let i = 0; i < 5; i++) {
+        for (let emoji in emojis) {
+          createShootingElement(emoji, 'emoji');
+        }
+      }
+
+      for (let i = 0; i < 10; i++) { // Increase the occurrence of obstacles
+        for (let obstacle in obstacles) {
+          createShootingElement(obstacle, 'obstacle');
+        }
       }
     }
 
-    setInterval(generateShootingElements, 2000);
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        clearInterval(generateElementsInterval);
+      } else {
+        generateElementsInterval = setInterval(generateShootingElements, 2000);
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    generateElementsInterval = setInterval(generateShootingElements, 2000);
+
+    setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft--;
+        document.getElementById("timer").innerText = "Time left: " + timeLeft + "s";
+      } else {
+        alert("Time's up! Your final score is: " + score);
+        location.reload();
+      }
+    }, 1000);
   </script>
-  <!-- Add the following code to create a link to Uniswap -->
   <div style="position: fixed; bottom: 10px; right: 10px;">
     <a href="https://app.uniswap.org/#/swap?exactField=input&exactAmount=1&inputCurrency=eth" target="_blank">The ticker is HHH 🤣</a>
+  </div>
+  <div style="position: fixed; top: 10px; right: 10px;">
+    <span id="score">Score: 0</span>
+    <span id="timer">Time left: 300s</span>
   </div>
 </body>
 </html>
